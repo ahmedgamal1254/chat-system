@@ -24,3 +24,14 @@ Route::middleware(['auth',])->group(function () {
 Route::post('/save', [App\Http\Controllers\MessageController::class,'save'])->name('save');
 Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('ahmed',function (){
+    return DB::table('messages')->join('users', 'user_send', '=', 'users.id')
+        ->where(function ($query){
+            $query->where('messages.user_send','=',Auth::id())->where('messages.user_recieve','=',2);
+        })->orWhere(function ($query){
+            $query->where('messages.user_send','=',2)->where('messages.user_recieve','=',Auth::id());
+        })->select('users.name', 'users.gender', 'messages.*')->count(); 
+});
+
+Route::post('/uploadFile', [App\Http\Controllers\MessageController::class, 'store'])->name('uploadFile');
